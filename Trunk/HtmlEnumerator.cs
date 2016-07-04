@@ -21,11 +21,11 @@ namespace NotesFor.HtmlToOpenXml
 	[System.Diagnostics.DebuggerDisplay("HtmlEnumerator. Current: {Current}")]
 	public sealed class HtmlEnumerator : IEnumerator<string>
 	{
-		private static Regex
-            stripTagRegex = new Regex(@"(</?\w+)");          // extract the name of a tag without its attributes but with the < >
+        // extract the name of a tag without its attributes but with the < >
+        private static Regex stripTagRegex = new Regex(@"(</?\w+)");          
 
-		private IEnumerator<String> en;
-		private String current, currentTag;
+		private IEnumerator<string> en;
+		private string current, currentTag;
 		private HtmlAttributeCollection attributes, styleAttributes;
 
 		/// <summary>

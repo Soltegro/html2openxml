@@ -17,7 +17,7 @@ using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace NotesFor.HtmlToOpenXml
 {
-	sealed class NumberingListStyleCollection
+	public sealed class NumberingListStyleCollection
 	{
 		private MainDocumentPart mainPart;
 		private int nextInstanceID, absNumId, levelDepth;

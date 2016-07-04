@@ -19,7 +19,7 @@ namespace NotesFor.HtmlToOpenXml
 	using TagsAtSameLevel = System.ArraySegment<DocumentFormat.OpenXml.OpenXmlElement>;
 
 
-	sealed class TableStyleCollection : OpenXmlStyleCollectionBase
+	public sealed class TableStyleCollection : OpenXmlStyleCollectionBase
 	{
 		private ParagraphStyleCollection paragraphStyle;
 		private HtmlDocumentStyle documentStyle;

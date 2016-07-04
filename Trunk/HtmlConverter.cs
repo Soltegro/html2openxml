@@ -69,7 +69,7 @@ namespace NotesFor.HtmlToOpenXml
 			this.mainPart = mainPart;
 			this.RenderPreAsTable = true;
 			this.ImageProcessing = ImageProcessing.AutomaticDownload;
-			this.knownTags = InitKnownTags();
+			this.knownTags = this.InitKnownTags();
 			this.htmlStyles = new HtmlDocumentStyle(mainPart);
 			this.knownImageParts = new Dictionary<Uri, CachedImagePart>();
 			this.WebProxy = new WebProxy();
@@ -79,9 +79,9 @@ namespace NotesFor.HtmlToOpenXml
 		/// Start the parse processing.
 		/// </summary>
 		/// <returns>Returns a list of parsed paragraph.</returns>
-        public IList<OpenXmlCompositeElement> Parse(String html)
+        public IList<OpenXmlCompositeElement> Parse(string html)
 		{
-			if (String.IsNullOrEmpty(html))
+			if (string.IsNullOrEmpty(html))
 				return new Paragraph[0];
 
 			// ensure a body exists to avoid any errors when trying to access it
@@ -92,37 +92,41 @@ namespace NotesFor.HtmlToOpenXml
 
 			// Reset:
 			elements = new List<OpenXmlElement>();
-			paragraphs = new List<OpenXmlCompositeElement>();
+			this.paragraphs = new List<OpenXmlCompositeElement>();
 			tables = new TableContext();
 			htmlStyles.Runs.Reset();
 			currentParagraph = null;
 
 			// Start a new processing
-			paragraphs.Add(currentParagraph = htmlStyles.Paragraph.NewParagraph());
+			this.paragraphs.Add(currentParagraph = htmlStyles.Paragraph.NewParagraph());
 			if (htmlStyles.DefaultParagraphStyle != null)
 			{
-				currentParagraph.ParagraphProperties = new ParagraphProperties {
-					ParagraphStyleId = new ParagraphStyleId { Val = htmlStyles.DefaultParagraphStyle }
+				currentParagraph.ParagraphProperties = new ParagraphProperties
+                {
+					ParagraphStyleId = new ParagraphStyleId
+                    {
+                        Val = htmlStyles.DefaultParagraphStyle
+                    }
 				};
 			}
 
-			HtmlEnumerator en = new HtmlEnumerator(html);
-			ProcessHtmlChunks(en, null);
+			var en = new HtmlEnumerator(html);
+			this.ProcessHtmlChunks(en, null);
 
             if (elements.Count > 0)
                 this.currentParagraph.Append(elements);
 
 			// As the Parse method is public, to avoid changing the type of the return value, I use this proxy
 			// that will allow me to call the recursive method RemoveEmptyParagraphs with no major changes, impacting the client.
-			RemoveEmptyParagraphs();
+			this.RemoveEmptyParagraphs();
 
-			return paragraphs;
+			return this.paragraphs;
 		}
 
         /// <summary>
 		/// Start the parse processing and append the converted paragraphs into the Body of the document.
 		/// </summary>
-        public void ParseHtml(String html)
+        public void ParseHtml(string html)
         {
             // This method exists because we may ensure the SectionProperties remains the last element of the body.
             // It's mandatory when dealing with page orientation
@@ -193,7 +197,7 @@ namespace NotesFor.HtmlToOpenXml
 
 		#region ProcessHtmlChunks
 
-		protected void ProcessHtmlChunks(HtmlEnumerator en, String endTag)
+		protected void ProcessHtmlChunks(HtmlEnumerator en, string endTag)
 		{
 			while (en.MoveUntilMatch(endTag))
 			{

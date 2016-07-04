@@ -20,7 +20,7 @@ namespace NotesFor.HtmlToOpenXml
 	using TagsAtSameLevel = System.ArraySegment<DocumentFormat.OpenXml.OpenXmlElement>;
 
 
-	sealed class ParagraphStyleCollection : OpenXmlStyleCollectionBase
+	public sealed class ParagraphStyleCollection : OpenXmlStyleCollectionBase
 	{
 		private HtmlDocumentStyle documentStyle;
 		private static GetSequenceNumberHandler getTagOrderHandler;

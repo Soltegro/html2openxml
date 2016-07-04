@@ -22,7 +22,7 @@ namespace NotesFor.HtmlToOpenXml
 	/// <summary>
 	/// Defines the styles to apply on OpenXml elements.
 	/// </summary>
-	abstract class OpenXmlStyleCollectionBase
+	public abstract class OpenXmlStyleCollectionBase
 	{
 		/// <summary>
 		/// Handler to retrieves the insert order of a child inside its parent element.

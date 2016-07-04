@@ -142,7 +142,7 @@ namespace NotesFor.HtmlToOpenXml
 		/// <summary>
 		/// Add a new style inside the document and refresh the style cache.
 		/// </summary>
-		internal void AddStyle(String name, Style style)
+		public void AddStyle(String name, Style style)
 		{
 			knownStyles[name] = style;
 			if (mainPart.StyleDefinitionsPart == null)
@@ -150,7 +150,7 @@ namespace NotesFor.HtmlToOpenXml
 			mainPart.StyleDefinitionsPart.Styles.Append(style);
 		}
 
-		#endregion
+        #endregion
 
         #region EnsureKnownStyle
 
@@ -195,28 +195,24 @@ namespace NotesFor.HtmlToOpenXml
 
         #endregion
 
-		//____________________________________________________________________
-		//
+        //____________________________________________________________________
+        //
 
-		internal RunStyleCollection Runs
+        public RunStyleCollection Runs
 		{
-			[System.Diagnostics.DebuggerHidden()]
 			get { return runStyle; }
 		}
-		internal TableStyleCollection Tables
+        public TableStyleCollection Tables
 		{
-			[System.Diagnostics.DebuggerHidden()]
 			get { return tableStyle; }
 		}
-		internal ParagraphStyleCollection Paragraph
+        public ParagraphStyleCollection Paragraph
 		{
-			[System.Diagnostics.DebuggerHidden()]
 			get { return paraStyle; }
 		}
-        internal NumberingListStyleCollection NumberingList
+        public NumberingListStyleCollection NumberingList
         {
 			// use lazy loading to avoid injecting NumberListDefinition if not required
-            [System.Diagnostics.DebuggerHidden()]
             get { return listStyle ?? (listStyle = new NumberingListStyleCollection(mainPart)); }
         }
 

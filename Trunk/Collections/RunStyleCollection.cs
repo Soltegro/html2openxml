@@ -20,7 +20,7 @@ namespace NotesFor.HtmlToOpenXml
 	using TagsAtSameLevel = System.ArraySegment<DocumentFormat.OpenXml.OpenXmlElement>;
 
 
-	sealed class RunStyleCollection : OpenXmlStyleCollectionBase
+	public sealed class RunStyleCollection : OpenXmlStyleCollectionBase
 	{
 		private HtmlDocumentStyle documentStyle;
 		private static GetSequenceNumberHandler getTagOrderHandler;
@@ -58,6 +58,7 @@ namespace NotesFor.HtmlToOpenXml
 		/// <summary>
 		/// Converts some common styling attributes to their OpenXml equivalence.
 		/// </summary>
+        /// <param name="en"></param>
 		/// <param name="styleAttributes">The collection of attributes where to store new discovered attributes.</param>
 		public void ProcessCommonAttributes(HtmlEnumerator en, IList<OpenXmlElement> styleAttributes)
 		{
