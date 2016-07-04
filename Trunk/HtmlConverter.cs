@@ -204,7 +204,7 @@ namespace NotesFor.HtmlToOpenXml
 				if (en.IsCurrentHtmlTag)
 				{
 					Action<HtmlEnumerator> action;
-					if (knownTags.TryGetValue(en.CurrentTag, out action))
+					if (en.CurrentTag != null && knownTags.TryGetValue(en.CurrentTag, out action))
 					{
 						if (Logging.On) Logging.PrintVerbose(en.Current);
 						action(en);
