@@ -22,7 +22,7 @@ namespace NotesFor.HtmlToOpenXml
 	/// <summary>
 	/// Represents the collection of attributes present in the current html tag.
 	/// </summary>
-	sealed class HtmlAttributeCollection
+	public sealed class HtmlAttributeCollection
 	{
 		// This regex split the attributes. This line is valid and all the attributes are well discovered:
 		// <table border="1" contenteditable style="text-align: center; color: #ff00e6" cellpadding=0 cellspacing='0' align="center">
@@ -47,10 +47,10 @@ namespace NotesFor.HtmlToOpenXml
 			this.attributes = new StringDictionary();
 		}
 
-		public static HtmlAttributeCollection Parse(String htmlTag)
+		public static HtmlAttributeCollection Parse(string htmlTag)
 		{
 			HtmlAttributeCollection collection = new HtmlAttributeCollection();
-			if (String.IsNullOrEmpty(htmlTag)) return collection;
+			if (string.IsNullOrEmpty(htmlTag)) return collection;
 
 			// We remove the name of the tag (due to our regex) and ensure there are at least one parameter
 			int startIndex;
@@ -102,7 +102,7 @@ namespace NotesFor.HtmlToOpenXml
 		/// <summary>
 		/// Gets the named attribute.
 		/// </summary>
-		public String this[String name]
+		public string this[string name]
 		{
 			get { return attributes[name]; }
 		}
@@ -110,11 +110,11 @@ namespace NotesFor.HtmlToOpenXml
 		/// <summary>
 		/// Gets an attribute representing an integer.
 		/// </summary>
-		public Int32? GetAsInt(String name)
+		public int? GetAsInt(string name)
 		{
 			string attrValue = this[name];
 			int val;
-			if (attrValue != null && Int32.TryParse(attrValue, NumberStyles.Integer, CultureInfo.InvariantCulture, out val))
+			if (attrValue != null && int.TryParse(attrValue, NumberStyles.Integer, CultureInfo.InvariantCulture, out val))
 				return val;
 
 			return null;
@@ -212,7 +212,7 @@ namespace NotesFor.HtmlToOpenXml
 		/// <summary>
 		/// Gets the class attribute that specify one or more classnames.
 		/// </summary>
-		public String[] GetAsClass()
+		public string[] GetAsClass()
 		{
 			string attrValue = this["class"];
 			if (attrValue == null) return null;

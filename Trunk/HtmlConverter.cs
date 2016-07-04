@@ -23,7 +23,7 @@ namespace NotesFor.HtmlToOpenXml
     using a = DocumentFormat.OpenXml.Drawing;
     using pic = DocumentFormat.OpenXml.Drawing.Pictures;
     using wp = DocumentFormat.OpenXml.Drawing.Wordprocessing;
-using System.Text.RegularExpressions;
+    using System.Text.RegularExpressions;
 
 
 	/// <summary>
@@ -39,26 +39,24 @@ using System.Text.RegularExpressions;
 		sealed class CachedImagePart
 		{
 			public ImagePart Part;
-			public Int32 Width;
-			public Int32 Height;
+			public int Width;
+			public int Height;
 		}
 
-		private MainDocumentPart mainPart;
+		protected MainDocumentPart mainPart;
 		/// <summary>The list of paragraphs that will be returned.</summary>
-		private IList<OpenXmlCompositeElement> paragraphs;
-		/// <summary>Holds the elements to append to the current paragraph.</summary>
-		private List<OpenXmlElement> elements;
-		private Paragraph currentParagraph;
-		private Int32 footnotesRef = 1, endnotesRef = 1, figCaptionRef = -1;
-		private Dictionary<String, Action<HtmlEnumerator>> knownTags;
-		private Dictionary<Uri, CachedImagePart> knownImageParts;
+		protected IList<OpenXmlCompositeElement> paragraphs;
+        /// <summary>Holds the elements to append to the current paragraph.</summary>
+        protected List<OpenXmlElement> elements;
+        protected Paragraph currentParagraph;
+		private int footnotesRef = 1, endnotesRef = 1, figCaptionRef = -1;
+		private IDictionary<string, Action<HtmlEnumerator>> knownTags;
+		private IDictionary<Uri, CachedImagePart> knownImageParts;
 		private TableContext tables;
 		private HtmlDocumentStyle htmlStyles;
 		private uint drawingObjId, imageObjId;
 		private Uri baseImageUri;
-
-
-
+        
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -195,7 +193,7 @@ using System.Text.RegularExpressions;
 
 		#region ProcessHtmlChunks
 
-		private void ProcessHtmlChunks(HtmlEnumerator en, String endTag)
+		protected void ProcessHtmlChunks(HtmlEnumerator en, String endTag)
 		{
 			while (en.MoveUntilMatch(endTag))
 			{
@@ -230,7 +228,7 @@ using System.Text.RegularExpressions;
 		/// Save the actual list and restart with a new one.
 		/// Continue to process until we found endTag.
 		/// </summary>
-		private void AlternateProcessHtmlChunks(HtmlEnumerator en, string endTag)
+		protected void AlternateProcessHtmlChunks(HtmlEnumerator en, string endTag)
 		{
 			if (elements.Count > 0) CompleteCurrentParagraph();
 			ProcessHtmlChunks(en, endTag);
@@ -244,7 +242,7 @@ using System.Text.RegularExpressions;
 		/// Add a new paragraph, table, ... to the list of processed paragrahs. This method takes care of 
 		/// adding the new element to the current table if it exists.
 		/// </summary>
-		private void AddParagraph(OpenXmlCompositeElement element)
+		protected void AddParagraph(OpenXmlCompositeElement element)
 		{
 			if (tables.HasContext)
 			{
@@ -269,7 +267,7 @@ using System.Text.RegularExpressions;
 		/// </summary>
 		/// <param name="description">The description of an acronym, abbreviation, some book references, ...</param>
 		/// <returns>Returns the id of the footnote reference.</returns>
-		private int AddFootnoteReference(string description)
+		protected int AddFootnoteReference(string description)
 		{
 			FootnotesPart fpart = mainPart.FootnotesPart;
 			if (fpart == null)
@@ -379,7 +377,7 @@ using System.Text.RegularExpressions;
 		/// </summary>
 		/// <param name="description">The description of an acronym, abbreviation, some book references, ...</param>
 		/// <returns>Returns the id of the endnote reference.</returns>
-		private int AddEndnoteReference(string description)
+		protected int AddEndnoteReference(string description)
 		{
 			EndnotesPart fpart = mainPart.EndnotesPart;
 			if (fpart == null)
@@ -453,15 +451,15 @@ using System.Text.RegularExpressions;
 			return endnotesRef;
 		}
 
-		#endregion
+        #endregion
 
-		#region AddFigureCaption
+        #region AddFigureCaption
 
-		/// <summary>
-		/// Add a new figure caption to the document.
-		/// </summary>
-		/// <returns>Returns the id of the new figure caption.</returns>
-		private int AddFigureCaption()
+        /// <summary>
+        /// Add a new figure caption to the document.
+        /// </summary>
+        /// <returns>Returns the id of the new figure caption.</returns>
+        protected int AddFigureCaption()
 		{
 			if (figCaptionRef == -1)
 			{
@@ -476,11 +474,11 @@ using System.Text.RegularExpressions;
 			return figCaptionRef;
 		}
 
-		#endregion
+        #endregion
 
-		#region AddImagePart
+        #region AddImagePart
 
-		private Drawing AddImagePart(Uri imageUrl, String imageSource, String alt, Size preferredSize)
+        protected Drawing AddImagePart(Uri imageUrl, String imageSource, String alt, Size preferredSize)
 		{
 			if (imageObjId == UInt32.MinValue)
 			{
@@ -605,7 +603,7 @@ using System.Text.RegularExpressions;
 
 		#region InitKnownTags
 
-		private Dictionary<String, Action<HtmlEnumerator>> InitKnownTags()
+		protected virtual IDictionary<String, Action<HtmlEnumerator>> InitKnownTags()
 		{
 			// A complete list of HTML tags can be found here: http://www.w3schools.com/tags/default.asp
 
@@ -694,16 +692,16 @@ using System.Text.RegularExpressions;
 			return knownTags;
 		}
 
-		#endregion
+        #endregion
 
-		#region CompleteCurrentParagraph
+        #region CompleteCurrentParagraph
 
-		/// <summary>
-		/// Push the elements members to the current paragraph and reset the elements collection.
-		/// </summary>
-		/// <param name="createNew">True to automatically create a new paragraph, stored in the instance member <see cref="currentParagraph"/>.</param>
-		/// <returns>Returns the completed paragraph.</returns>
-		private Paragraph CompleteCurrentParagraph(bool createNew = false)
+        /// <summary>
+        /// Push the elements members to the current paragraph and reset the elements collection.
+        /// </summary>
+        /// <param name="createNew">True to automatically create a new paragraph, stored in the instance member <see cref="currentParagraph"/>.</param>
+        /// <returns>Returns the completed paragraph.</returns>
+        protected Paragraph CompleteCurrentParagraph(bool createNew = false)
 		{
 			htmlStyles.Paragraph.ApplyTags(currentParagraph);
 			this.currentParagraph.Append(elements);
@@ -727,16 +725,16 @@ using System.Text.RegularExpressions;
 			htmlStyles.PrepareStyles(mainPart);
 		}
 
-		#endregion
+        #endregion
 
-		#region ProcessContainerAttributes
+        #region ProcessContainerAttributes
 
-		/// <summary>
-		/// There is a few attributes shared by a large number of tags. This method will check them for a limited
-		/// number of tags (&lt;p&gt;, &lt;pre&gt;, &lt;div&gt;, &lt;span&gt; and &lt;body&gt;).
-		/// </summary>
-		/// <returns>Returns true if the processing of this tag should generate a new paragraph.</returns>
-		private bool ProcessContainerAttributes(HtmlEnumerator en, IList<OpenXmlElement> styleAttributes)
+        /// <summary>
+        /// There is a few attributes shared by a large number of tags. This method will check them for a limited
+        /// number of tags (&lt;p&gt;, &lt;pre&gt;, &lt;div&gt;, &lt;span&gt; and &lt;body&gt;).
+        /// </summary>
+        /// <returns>Returns true if the processing of this tag should generate a new paragraph.</returns>
+        protected bool ProcessContainerAttributes(HtmlEnumerator en, IList<OpenXmlElement> styleAttributes)
 		{
 			bool newParagraph = false;
 

@@ -18,7 +18,7 @@ namespace NotesFor.HtmlToOpenXml
 	/// <summary>
 	/// Represents a Html font (15px arial,sans-serif).
 	/// </summary>
-	struct HtmlFont
+	public struct HtmlFont
 	{
 		/// <summary>Represents an empty font (not defined).</summary>
 		public static readonly HtmlFont Empty = new HtmlFont(FontStyle.Normal, FontVariant.Normal, FontWeight.Normal, Unit.Empty, null);

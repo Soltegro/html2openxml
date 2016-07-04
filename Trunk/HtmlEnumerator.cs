@@ -19,7 +19,7 @@ namespace NotesFor.HtmlToOpenXml
 	/// Splits an html chunk of text and provide a way to enumerate through its tags.
 	/// </summary>
 	[System.Diagnostics.DebuggerDisplay("HtmlEnumerator. Current: {Current}")]
-	sealed class HtmlEnumerator : IEnumerator<String>
+	public sealed class HtmlEnumerator : IEnumerator<string>
 	{
 		private static Regex
             stripTagRegex = new Regex(@"(</?\w+)");          // extract the name of a tag without its attributes but with the < >
@@ -28,11 +28,10 @@ namespace NotesFor.HtmlToOpenXml
 		private String current, currentTag;
 		private HtmlAttributeCollection attributes, styleAttributes;
 
-
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public HtmlEnumerator(String html)
+		public HtmlEnumerator(string html)
 		{
 			// Clean a bit the html before processing
 

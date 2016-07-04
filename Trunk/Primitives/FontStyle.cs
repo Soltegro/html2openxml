@@ -16,7 +16,7 @@ namespace NotesFor.HtmlToOpenXml
 	/// <summary>
 	/// Specifies the font style for a text.
 	/// </summary>
-	enum FontStyle
+	public enum FontStyle
 	{
 		Normal,
 		/// <summary>

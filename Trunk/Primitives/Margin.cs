@@ -18,7 +18,7 @@ namespace NotesFor.HtmlToOpenXml
     /// <summary>
     /// Represents a Html Unit (ie: 120px, 10em, ...).
     /// </summary>
-    struct Margin
+    public struct Margin
     {
         private Unit[] sides;
 

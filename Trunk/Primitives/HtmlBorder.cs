@@ -23,7 +23,7 @@ namespace NotesFor.HtmlToOpenXml
 	/// <summary>
 	/// Represents a Html Border with the 4 sides.
 	/// </summary>
-	struct HtmlBorder
+	public struct HtmlBorder
 	{
 		private SideBorder[] sides;
 

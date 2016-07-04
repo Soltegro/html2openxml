@@ -23,7 +23,7 @@ namespace NotesFor.HtmlToOpenXml
 	/// Represents a Html Unit (ie: 120px, 10em, ...).
 	/// </summary>
 	[System.Diagnostics.DebuggerDisplay("{DebuggerDisplay,nq}")]
-	struct SideBorder
+	public struct SideBorder
 	{
 		/// <summary>Represents an empty border (not defined).</summary>
 		public static readonly SideBorder Empty = new SideBorder();
