@@ -53,7 +53,7 @@ namespace NotesFor.HtmlToOpenXml
 		private IDictionary<string, Action<HtmlEnumerator>> knownTags;
 		private IDictionary<Uri, CachedImagePart> knownImageParts;
 		private TableContext tables;
-		private HtmlDocumentStyle htmlStyles;
+		protected HtmlDocumentStyle htmlStyles;
 		private uint drawingObjId, imageObjId;
 		private Uri baseImageUri;
         
@@ -167,6 +167,9 @@ namespace NotesFor.HtmlToOpenXml
 				if (i > 0 && i + 1 < paragraphs.Count - 1
 					&& paragraphs[i - 1].LocalName == "tbl"
 					&& paragraphs[i + 1].LocalName == "tbl") continue;
+
+                // Don't remove my alt-chunks!
+                if (p is AltChunk) continue;
 
 				if (p.HasChildren)
 				{
