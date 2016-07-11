@@ -57,20 +57,39 @@ namespace NotesFor.HtmlToOpenXml
 		internal void PrepareStyles(MainDocumentPart mainPart)
 		{
 			knownStyles = new OpenXmlDocumentStyleCollection();
-			if (mainPart.StyleDefinitionsPart == null) return;
+            if (mainPart.StyleDefinitionsPart == null)
+            {
+                return;
+            }
 
 			Styles styles = mainPart.StyleDefinitionsPart.Styles;
-
 			foreach (var s in styles.Elements<Style>())
 			{
 				StyleName n = s.StyleName;
 				if (n != null)
 				{
-					String name = n.Val.Value;
-					if (name != s.StyleId) knownStyles[name] = s;
+					string name = n.Val.Value;
+                    if (name != s.StyleId)
+                    {
+                        if (!knownStyles.ContainsKey(name))
+                        {
+                            knownStyles.Add(name, s);
+                        }
+                        else
+                        {
+                            knownStyles[name] = s;
+                        }
+                    }
 				}
 
-				knownStyles.Add(s.StyleId, s);
+                if (!knownStyles.ContainsKey(s.StyleId))
+                {
+                    knownStyles.Add(s.StyleId, s);
+                }
+                else
+                {
+                    knownStyles[s.StyleId] = s;
+                }
 			}
 		}
 
@@ -85,7 +104,7 @@ namespace NotesFor.HtmlToOpenXml
 		/// <param name="styleType">True to obtain the character version of the given style.</param>
 		/// <param name="ignoreCase">Indicate whether the search should be performed with the case-sensitive flag or not.</param>
 		/// <returns>If not found, returns the given name argument.</returns>
-		public String GetStyle(string name, StyleValues styleType = StyleValues.Paragraph, bool ignoreCase = false)
+		public string GetStyle(string name, StyleValues styleType = StyleValues.Paragraph, bool ignoreCase = false)
 		{
 			Style style;
 
@@ -94,12 +113,15 @@ namespace NotesFor.HtmlToOpenXml
 			if (ignoreCase)
 			{
 				if (!knownStyles.TryGetValueIgnoreCase(name, styleType, out style))
-				{
-					if (StyleMissing != null)
+                {
+                    var styleMissingDelegate = this.StyleMissing;
+                    if (styleMissingDelegate != null)
 					{
-						StyleMissing(this, new StyleEventArgs(name, mainPart, styleType));
-						if (knownStyles.TryGetValueIgnoreCase(name, styleType, out style))
-							return style.StyleId;
+                        styleMissingDelegate.Invoke(this, new StyleEventArgs(name, mainPart, styleType));
+                        if (knownStyles.TryGetValueIgnoreCase(name, styleType, out style))
+                        {
+                            return style.StyleId;
+                        }
 					}
 					return null; // null means we ignore this style (css class)
 				}
@@ -110,14 +132,22 @@ namespace NotesFor.HtmlToOpenXml
 			{
 				if (!knownStyles.TryGetValue(name, out style))
 				{
-					if (StyleMissing != null) StyleMissing(this, new StyleEventArgs(name, mainPart, styleType));
+                    var styleMissingDelegate = this.StyleMissing;
+                    if (styleMissingDelegate != null)
+                    {
+                        styleMissingDelegate.Invoke(this, new StyleEventArgs(name, mainPart, styleType));
+                    }
+
 					return name;
 				}
 
 				if (styleType == StyleValues.Character && !style.Type.Equals<StyleValues>(StyleValues.Character))
 				{
 					LinkedStyle linkStyle = style.GetFirstChild<LinkedStyle>();
-					if (linkStyle != null) return linkStyle.Val;
+                    if (linkStyle != null)
+                    {
+                        return linkStyle.Val;
+                    }
 				}
 				return style.StyleId;
 			}
@@ -142,11 +172,13 @@ namespace NotesFor.HtmlToOpenXml
 		/// <summary>
 		/// Add a new style inside the document and refresh the style cache.
 		/// </summary>
-		public void AddStyle(String name, Style style)
+		public void AddStyle(string name, Style style)
 		{
 			knownStyles[name] = style;
-			if (mainPart.StyleDefinitionsPart == null)
-				mainPart.AddNewPart<StyleDefinitionsPart>().Styles = new Styles();
+            if (mainPart.StyleDefinitionsPart == null)
+            {
+                mainPart.AddNewPart<StyleDefinitionsPart>().Styles = new Styles();
+            }
 			mainPart.StyleDefinitionsPart.Styles.Append(style);
 		}
 
@@ -173,9 +205,11 @@ namespace NotesFor.HtmlToOpenXml
             else if (styleName == KnownStyles.Caption)
             {
                 if (this.DoesStyleExists("caption"))
+                {
                     return;
+                }
 
-                String normalStyleName = this.GetStyle("Normal", StyleValues.Paragraph);
+                string normalStyleName = this.GetStyle("Normal", StyleValues.Paragraph);
                 Style style = new Style(
                     new StyleName { Val = "caption" },
                     new BasedOn { Val = normalStyleName },
@@ -222,7 +256,7 @@ namespace NotesFor.HtmlToOpenXml
 		/// <summary>
 		/// Gets the default StyleId to apply on the any new paragraph.
 		/// </summary>
-		internal String DefaultParagraphStyle
+		internal string DefaultParagraphStyle
 		{
 			get { return paraStyle.DefaultParagraphStyle; }
 			set { paraStyle.DefaultParagraphStyle = value; }
@@ -231,12 +265,12 @@ namespace NotesFor.HtmlToOpenXml
 		/// <summary>
 		/// Gets or sets the default paragraph style to apply on any new runs.
 		/// </summary>
-		public String DefaultStyle
+		public string DefaultStyle
 		{
 			get { return DefaultParagraphStyle ?? runStyle.DefaultRunStyle; }
 			set
 			{
-				if (String.IsNullOrEmpty(value))
+				if (string.IsNullOrEmpty(value))
 				{
 					runStyle.DefaultRunStyle = null;
 					this.DefaultParagraphStyle = null;
@@ -250,10 +284,14 @@ namespace NotesFor.HtmlToOpenXml
 				}
 				else
 				{
-					if (s.Type.Equals<StyleValues>(StyleValues.Paragraph))
-						this.DefaultParagraphStyle = s.StyleId;
-					else
-						runStyle.DefaultRunStyle = s.StyleId;
+                    if (s.Type.Equals<StyleValues>(StyleValues.Paragraph))
+                    {
+                        this.DefaultParagraphStyle = s.StyleId;
+                    }
+                    else
+                    {
+                        runStyle.DefaultRunStyle = s.StyleId;
+                    }
 				}
 			}
 		}
