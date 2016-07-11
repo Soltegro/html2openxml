@@ -78,13 +78,18 @@ namespace NotesFor.HtmlToOpenXml
 		/// </summary>
 		public static string HtmlDecode(string s)
 		{
-			if (s == null) return null;
+            if (s == null)
+            {
+                return null;
+            }
 
-			if (s.IndexOf('&') < 0) return s;
+            if (s.IndexOf('&') < 0)
+            {
+                return s;
+            }
 
-			StringBuilder sb = new StringBuilder();
-			StringWriter output = new StringWriter(sb, CultureInfo.InvariantCulture);
-			HtmlDecode(s, output);
+			var sb = new StringBuilder();
+			HtmlDecode(s, new StringWriter(sb, CultureInfo.InvariantCulture));
 			return sb.ToString();
 		}
 
@@ -94,8 +99,15 @@ namespace NotesFor.HtmlToOpenXml
 		/// </summary>
 		public static void HtmlDecode(string s, TextWriter output)
 		{
-			if (s == null) return;
-			if (s.IndexOf('&') < 0) output.Write(s);
+            if (s == null)
+            {
+                return;
+            }
+
+            if (s.IndexOf('&') < 0)
+            {
+                output.Write(s);
+            }
 
 			char[] entityEndingChars = new char[] { ';', '&' };
 
@@ -108,7 +120,6 @@ namespace NotesFor.HtmlToOpenXml
 					output.Write(ch);
 					continue;
 				}
-
 
 				int endIndex = s.IndexOfAny(entityEndingChars, i + 1);
 				if (endIndex > 0 && s[endIndex] == ';')

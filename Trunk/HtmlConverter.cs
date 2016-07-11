@@ -81,14 +81,20 @@ namespace NotesFor.HtmlToOpenXml
 		/// <returns>Returns a list of parsed paragraph.</returns>
         public IList<OpenXmlCompositeElement> Parse(string html)
 		{
-			if (string.IsNullOrEmpty(html))
-				return new Paragraph[0];
+            if (string.IsNullOrEmpty(html))
+            {
+                return new Paragraph[0];
+            }
 
-			// ensure a body exists to avoid any errors when trying to access it
-			if (mainPart.Document == null)
-				new Document(new Body()).Save(mainPart);
-			else if (mainPart.Document.Body == null)
-				mainPart.Document.Body = new Body();
+            // ensure a body exists to avoid any errors when trying to access it
+            if (mainPart.Document == null)
+            {
+                new Document(new Body()).Save(mainPart);
+            }
+            else if (mainPart.Document.Body == null)
+            {
+                mainPart.Document.Body = new Body();
+            }
 
 			// Reset:
 			elements = new List<OpenXmlElement>();
@@ -114,7 +120,9 @@ namespace NotesFor.HtmlToOpenXml
 			this.ProcessHtmlChunks(en, null);
 
             if (elements.Count > 0)
+            {
                 this.currentParagraph.Append(elements);
+            }
 
 			// As the Parse method is public, to avoid changing the type of the return value, I use this proxy
 			// that will allow me to call the recursive method RemoveEmptyParagraphs with no major changes, impacting the client.
@@ -200,6 +208,11 @@ namespace NotesFor.HtmlToOpenXml
 
 		#region ProcessHtmlChunks
 
+        /// <summary>
+        /// Iterate over the html tags and process them.
+        /// </summary>
+        /// <param name="en"></param>
+        /// <param name="endTag"></param>
 		protected void ProcessHtmlChunks(HtmlEnumerator en, string endTag)
 		{
 			while (en.MoveUntilMatch(endTag))
@@ -207,17 +220,28 @@ namespace NotesFor.HtmlToOpenXml
 				if (en.IsCurrentHtmlTag)
 				{
 					Action<HtmlEnumerator> action;
-					if (en.CurrentTag != null && knownTags.TryGetValue(en.CurrentTag, out action))
-					{
-						if (Logging.On) Logging.PrintVerbose(en.Current);
-						action(en);
-					}
-
-					// else unknown or not yet implemented - we ignore
+                    if (en.CurrentTag != null && knownTags.TryGetValue(en.CurrentTag, out action))
+                    {
+                        // Process known tag
+                        if (Logging.On)
+                        {
+                            Logging.PrintVerbose(en.Current);
+                        }
+                        action(en);
+                    }
+                    else
+                    {
+                        // Just print unknown tag as text
+                        Run run = new Run(
+                            new Text(HttpUtility.HtmlDecode(en.Current)) { Space = SpaceProcessingModeValues.Preserve }
+                        );
+                        htmlStyles.Runs.ApplyTags(run);
+                        elements.Add(run);
+                    }
 				}
 				else
 				{
-					// apply the previously discovered style
+					// Print text and apply the previously discovered style
 					Run run = new Run(
 						new Text(HttpUtility.HtmlDecode(en.Current)) { Space = SpaceProcessingModeValues.Preserve }
 					);
@@ -485,7 +509,7 @@ namespace NotesFor.HtmlToOpenXml
 
         #region AddImagePart
 
-        protected Drawing AddImagePart(Uri imageUrl, String imageSource, String alt, Size preferredSize)
+        protected Drawing AddImagePart(Uri imageUrl, string imageSource, string alt, Size preferredSize)
 		{
 			if (imageObjId == UInt32.MinValue)
 			{
@@ -563,7 +587,7 @@ namespace NotesFor.HtmlToOpenXml
 				preferredSize = ImageHeader.KeepAspectRatio(actualSize, preferredSize);
 			}
 
-			String imagePartId = mainPart.GetIdOfPart(imagePart.Part);
+			string imagePartId = mainPart.GetIdOfPart(imagePart.Part);
 			long widthInEmus = new Unit(UnitMetric.Pixel, preferredSize.Width).ValueInEmus;
 			long heightInEmus = new Unit(UnitMetric.Pixel, preferredSize.Height).ValueInEmus;
 
@@ -574,7 +598,7 @@ namespace NotesFor.HtmlToOpenXml
 				new wp.Inline(
 					new wp.Extent() { Cx = widthInEmus, Cy = heightInEmus },
 					new wp.EffectExtent() { LeftEdge = 19050L, TopEdge = 0L, RightEdge = 0L, BottomEdge = 0L },
-					new wp.DocProperties() { Id = drawingObjId, Name = imageSource, Description = String.Empty },
+					new wp.DocProperties() { Id = drawingObjId, Name = imageSource, Description = string.Empty },
 					new wp.NonVisualGraphicFrameDrawingProperties {
 						GraphicFrameLocks = new a.GraphicFrameLocks() { NoChangeAspect = true }
 					},
@@ -610,11 +634,11 @@ namespace NotesFor.HtmlToOpenXml
 
 		#region InitKnownTags
 
-		protected virtual IDictionary<String, Action<HtmlEnumerator>> InitKnownTags()
+		protected virtual IDictionary<string, Action<HtmlEnumerator>> InitKnownTags()
 		{
 			// A complete list of HTML tags can be found here: http://www.w3schools.com/tags/default.asp
 
-			var knownTags = new Dictionary<String, Action<HtmlEnumerator>>(StringComparer.OrdinalIgnoreCase) {
+			var knownTags = new Dictionary<string, Action<HtmlEnumerator>>(StringComparer.OrdinalIgnoreCase) {
 				{ "<a>", ProcessLink },
 				{ "<abbr>" , ProcessAcronym },
 				{ "<acronym>" , ProcessAcronym },
@@ -748,7 +772,7 @@ namespace NotesFor.HtmlToOpenXml
 			// Not applicable to a table : page break
 			if (!tables.HasContext || en.CurrentTag == "<pre>")
 			{
-				String attrValue = en.StyleAttributes["page-break-after"];
+				string attrValue = en.StyleAttributes["page-break-after"];
 				if (attrValue == "always")
 				{
 					paragraphs.Add(new Paragraph(
