@@ -5,10 +5,12 @@ VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlToOpenXml", "Trunk\HtmlToOpenXml.csproj", "{EF700F30-C9BB-49A6-912C-E3B77857B514}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{E279A3FB-C025-4F67-B29F-8CDD4930CDAD}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{DFEE236D-E36F-4057-893E-182B1F0B98F4}"
 	ProjectSection(SolutionItems) = preProject
-		Nuget\Html2OpenXml.nuspec = Nuget\Html2OpenXml.nuspec
-		Nuget\html2openxml.png = Nuget\html2openxml.png
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
 Global
